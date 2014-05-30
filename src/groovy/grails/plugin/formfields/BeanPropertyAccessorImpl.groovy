@@ -81,10 +81,26 @@ class BeanPropertyAccessorImpl implements BeanPropertyAccessor {
 	}
 
 	private List<Class> getSuperclassesAndInterfaces(Class type) {
-		def superclasses = []
-		superclasses.addAll(ClassUtils.getAllSuperclasses(type))
-		superclasses.addAll(ClassUtils.getAllInterfaces(type))
-		superclasses.removeAll([Object, GroovyObject, Serializable, Cloneable, Comparable])
-		superclasses
+	   ClassUtils.getAllInterfaces(type).inject(
+          ClassUtils.getAllSuperclasses(type).inject([]) {
+          superClasses, superClass ->
+          type.genericInterfaces.inject(superClasses << superClass) {
+             superClassesWithDirectlyImplementInterfaces, iface ->
+             iface in superClassesWithDirectlyImplementInterfaces.contains() ?
+                superClassesWithDirectlyImplementInterfaces :
+                (superClassesWithDirectlyImplementInterfaces << iface)
+          }
+       }) { superClassesAndDirectlyImplementedInterfaces, noDirectlyImplementedInterface ->
+          noDirectlyImplementedInterface in superClassesAndDirectlyImplementedInterfaces ?
+             superClassesAndDirectlyImplementedInterfaces :
+             (superClassesAndDirectlyImplementedInterfaces << noDirectlyImplementedInterface)
+       }.findAll {
+          it instanceof Class &&
+             !(it in [Object, GroovyObject, Serializable, Cloneable, Comparable])
+       }
+       ////superclasses.addAll(ClassUtils.getAllSuperclasses(type))
+	   ////superclasses.addAll(ClassUtils.getAllInterfaces(type))
+	   //allSuperClasses.removeAll([Object, GroovyObject, Serializable, Cloneable, Comparable])
+	   //allSuperClasses as List
 	}
 }
