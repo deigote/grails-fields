@@ -67,7 +67,9 @@ class FormFieldsTagLib implements GrailsApplicationAware {
 		def domainClass = resolveDomainClass(bean)
 		if (domainClass) {
 			for (property in resolvePersistentProperties(domainClass, attrs)) {
-				out << field(bean: bean, property: property.name, prefix: prefix)
+                if (!attrs.propertyDiscriminator || attrs.propertyDiscriminator.call(attrs.bean, property.name)) {
+                   out << field(bean: bean, property: property.name, prefix: prefix)
+                }
 			}
 		} else {
 			throwTagError('Tag [all] currently only supports domain types')
