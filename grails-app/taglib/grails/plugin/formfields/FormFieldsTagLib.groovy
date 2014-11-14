@@ -290,8 +290,20 @@ class FormFieldsTagLib implements GrailsApplicationAware {
 			  it.name in scaffoldProp.include
 		   })
 	    }
-		Collections.sort(properties, new DomainClassPropertyComparator(domainClass))
+		Collections.sort(properties, getDomainClassPropertyComparator(domainClass))
 		properties
+	}
+
+	private Comparator getDomainClassPropertyComparator(GrailsDomainClass domainClass) {
+		DomainClassPropertyComparatorFactory comparatorFactory =
+		   getConfigObjectForDomainClassPropertyComparatorFactory() instanceof DomainClassPropertyComparatorFactory ?
+			  getConfigObjectForDomainClassPropertyComparatorFactory() : null
+		comparatorFactory ? comparatorFactory.getComparator(domainClass) :
+		   new DomainClassPropertyComparator(domainClass)
+	}
+
+	private getConfigObjectForDomainClassPropertyComparatorFactory() {
+	   grailsApplication.config.fields.plugin.domainClass.property.comparatorFactory
 	}
 
 	private boolean hasBody(Closure body) {
