@@ -101,17 +101,22 @@ class BeanPropertyAccessorImpl implements BeanPropertyAccessor {
 	}
 
 	boolean isRequired() {
-		if (propertyType in [Boolean, boolean]) {
-			false
-		} else if (propertyType == String) {
-            // if the property prohibits nulls and blanks are converted to nulls, then blanks will be prohibited even if a blank
-            // constraint does not exist
-            boolean hasBlankConstraint = constraints.hasAppliedConstraint(BLANK_CONSTRAINT)
-            boolean blanksImplicityProhibited = !hasBlankConstraint && !constraints?.nullable && convertBlanksToNull
-			!constraints?.nullable && (!constraints?.blank || blanksImplicityProhibited)
-		} else {
-			!constraints?.nullable
-		}
+	   if (constraints) {
+		  if (propertyType in [Boolean, boolean]) {
+			 false
+		  } else if (propertyType == String) {
+			 // if the property prohibits nulls and blanks are converted to nulls, then blanks will be prohibited even if a blank
+			 // constraint does not exist
+			 boolean hasBlankConstraint = constraints.hasAppliedConstraint(BLANK_CONSTRAINT)
+			 boolean blanksImplicityProhibited = !hasBlankConstraint && !constraints?.nullable && convertBlanksToNull
+			 !constraints?.nullable && (!constraints?.blank || blanksImplicityProhibited)
+		  } else {
+			 !constraints?.nullable
+		  }
+	   }
+	   else {
+		  false
+	   }
 	}
 
 	boolean isInvalid() {
