@@ -108,6 +108,10 @@ class FormFieldsTemplateService {
          }
       }
 
+      if (propertyAccessor.propertyType.isEnum()) {
+         templateResolveOrder << appendPiecesForUri("/_fields", 'enum', templateName)
+      }
+
       // if nothing else is found fall back to a default (even this may not exist for f:input)
       templateResolveOrder << "/_fields/default/$templateName"
 
