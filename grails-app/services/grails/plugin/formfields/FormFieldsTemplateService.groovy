@@ -94,18 +94,18 @@ class FormFieldsTemplateService {
          }
       }
 
-      // if this is an association property look in `grails-app/views/_fields/<associationType>/_field.gsp`
-      def associationPath = getAssociationPath(propertyAccessor)
-      if (associationPath) {
-         templateResolveOrder << appendPiecesForUri('/_fields', associationPath, templateName)
-      }
-
       // if we have a property type look in `grails-app/views/_fields/<propertyType>/_field.gsp` and equivalent for superclasses
       if (propertyAccessor.propertyType) {
          templateResolveOrder << appendPiecesForUri("/_fields", toPropertyNameFormat(propertyAccessor.propertyType), templateName)
          for (propertySuperClass in propertyAccessor.propertyTypeSuperclasses) {
             templateResolveOrder << appendPiecesForUri("/_fields", toPropertyNameFormat(propertySuperClass), templateName)
          }
+      }
+
+      // if this is an association property look in `grails-app/views/_fields/<associationType>/_field.gsp`
+      def associationPath = getAssociationPath(propertyAccessor)
+      if (associationPath) {
+         templateResolveOrder << appendPiecesForUri('/_fields', associationPath, templateName)
       }
 
       if (propertyAccessor.propertyType.isEnum()) {
